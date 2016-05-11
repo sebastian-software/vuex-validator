@@ -1,3 +1,5 @@
+*THIS IS ALPHA SOFTWARE*
+
 <img src="assets/vuejs.png" alt="VueJS Logo" width="200" height="200"/>
 
 # Vuex Validator<br/>[![Sponsored by][sponsor-img]][sponsor] [![Version][npm-version-img]][npm] [![Downloads][npm-downloads-img]][npm] [![Build Status][ci-img]][ci] [![Dependencies][deps-img]][deps]
