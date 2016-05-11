@@ -1,7 +1,7 @@
 {
   "name": "vuex-validator",
   "version": "0.1.1",
-  "description": "Advanced localization support for VueJS",
+  "description": "Validation support for Vuex",
   "keywords": [
     "vuejs",
     "vuex",
