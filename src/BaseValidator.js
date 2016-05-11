@@ -104,7 +104,7 @@ export default class BaseValidator {
 
         return all.concat(thisRule)
       },
-      []
+      true
     )
   }
 
