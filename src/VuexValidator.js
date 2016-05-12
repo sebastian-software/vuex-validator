@@ -58,6 +58,19 @@ function callValidatorFunction(context, validatorFunction, state)
   }
 }
 
+function computedModuleValidation(context, module)
+{
+  return function()
+  {
+    let isValid = validator.isValid(module)
+
+    if (isValid === true)
+      return null
+
+    return isValid
+  }
+}
+
 function install(Vue, { validators: _validators } = { validators: [] })
 {
   /* eslint no-invalid-this: 0, no-console:0 */
@@ -107,6 +120,9 @@ function install(Vue, { validators: _validators } = { validators: [] })
           getters[id] = computedValidation(self, id, rulesLength)
         }
       })
+
+      if (item.module)
+        getters[`\$invalid\$module\$${item.module}`] = computedModuleValidation(self, item.module)
     })
   }
 
