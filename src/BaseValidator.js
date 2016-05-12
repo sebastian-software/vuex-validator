@@ -61,6 +61,11 @@ export default class BaseValidator {
     return this._propertiesMap[property]
   }
 
+  getRuleContext()
+  {
+    return validatorAssertions
+  }
+
   /*
    * Add rule to validator. name {string} is the rule's name to find it in debugging mode.
    * properties {array(string)} is a list of properties that are validated with this rule.

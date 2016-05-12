@@ -48,11 +48,11 @@ function computedValidation(id, rulesLength)
   }
 }
 
-function callValidatorFunction(validatorFunction, state)
+function callValidatorFunction(context, validatorFunction, state)
 {
   return function()
   {
-    validatorFunction.call(this, state)
+    validatorFunction.call(context, state)
   }
 }
 
@@ -92,12 +92,14 @@ function install(Vue, { validators: _validators } = { validators: [] })
         const id = `\$valid\$${camelCase(prop)}`
         const rules = item.getRulesByProperty(prop)
         const rulesLength = rules.length
+        const ruleContext = item.getRuleContext()
+
         if (rulesLength > 0)
         {
           // TODO: Cache generated getters like Vuex do
           rules.forEach((rule, index) =>
           {
-            getters[`${id}${index}`] = callValidatorFunction(rule.validatorFunction, state)
+            getters[`${id}${index}`] = callValidatorFunction(ruleContext, rule.validatorFunction, state)
           })
           getters[id] = computedValidation(id, rulesLength)
         }
