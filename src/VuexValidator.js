@@ -42,16 +42,13 @@ function propertyValidator(state)
 
       return reduce(vals.map((val) => val.validatorFunction(state)), (all, self) =>
       {
-        if (all === true && self === true)
-          return true
-
-        if (all !== true && self === true)
+        if (!self)
           return all
 
-        if (all === true && self !== true)
-          return self
+        if (all)
+          return all.concat(self)
 
-        return all.concat(self)
+        return [ self ]
       })
     }
   }
