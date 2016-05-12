@@ -38,7 +38,16 @@ function propertyValidator(state)
     {
       const vals = propertyToValidator[property]
       if (!vals)
+      {
+        const moduleValidator = validatorsMap[property]
+        if (moduleValidator)
+        {
+          const isValid = moduleValidator.isValid()
+          return isValid === true ? null : isValid
+        }
+
         return null
+      }
 
       return reduce(vals.map((val) => val.validatorFunction(state)), (all, self) =>
       {
