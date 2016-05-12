@@ -1,7 +1,8 @@
-import { reduce, camelCase, isArray } from "lodash"
+import { reduce, camelCase, isArray, curry } from "lodash"
 
 const validators = []
 const validatorsMap = {}
+const propertyToValidator = {}
 
 class GlobalValidator {
   isValid(module = null)
@@ -29,6 +30,30 @@ class GlobalValidator {
 }
 
 const validator = new GlobalValidator()
+
+const propertyValidator = {
+  isInvalid: (property) =>
+  {
+    const vals = propertyToValidator[property]
+    if (!vals)
+      return null
+
+    return reduce(vals.map((val) => val.isValid()), (all, self) =>
+    {
+      console.log("TEST >>>>>", all, self)
+      if (all === true && self === true)
+        return true
+
+      if (all !== true && self === true)
+        return all
+
+      if (all === true && self !== true)
+        return self
+
+      return all.concat(self)
+    })
+  }
+}
 
 function computedValidation(context, id, rulesLength)
 {
@@ -105,6 +130,29 @@ function install(Vue, { validators: _validators } = { validators: [] })
     {
       item.getProperties().forEach((prop) =>
       {
+        if (!propertyToValidator[prop])
+          propertyToValidator[prop] = []
+
+        if (propertyToValidator[prop].indexOf(item) < 0)
+          propertyToValidator[prop].push(item)
+      })
+    })
+
+    if (options && options.vuex && options.vuex.validators)
+    {
+      const vals = options.vuex.validators
+      Object.keys(vals).forEach((prop) =>
+      {
+        const curriedFnt = curry(vals[prop], 1)(propertyValidator)
+        getters[prop] = curriedFnt
+      })
+    }
+
+    /*
+    validators.forEach((item) =>
+    {
+      item.getProperties().forEach((prop) =>
+      {
         const id = `\$invalid\$${camelCase(prop)}`
         const rules = item.getRulesByProperty(prop)
         const rulesLength = rules.length
@@ -123,7 +171,7 @@ function install(Vue, { validators: _validators } = { validators: [] })
 
       if (item.module)
         getters[`\$invalid\$module\$${item.module}`] = computedModuleValidation(self, item.module)
-    })
+    }) */
   }
 
   const _init = Vue.prototype._init
