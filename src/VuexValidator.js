@@ -49,7 +49,7 @@ function propertyValidator(state)
           return all.concat(self)
 
         return [ self ]
-      })
+      }, null)
     }
   }
 }
