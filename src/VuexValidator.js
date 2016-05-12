@@ -54,6 +54,10 @@ function propertyValidator(state)
         if (!self)
           return all
 
+        // It is possible, that a validation fails without being this property as reason
+        if (self.fields.indexOf(property) < 0)
+          return all
+
         if (all)
           return all.concat(self)
 
