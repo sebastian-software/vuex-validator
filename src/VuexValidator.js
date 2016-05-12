@@ -1,4 +1,4 @@
-import { reduce } from "lodash"
+import { reduce, camelCase } from "lodash"
 
 const validators = []
 const validatorsMap = {}
@@ -30,6 +30,24 @@ class GlobalValidator {
 
 const validator = new GlobalValidator()
 
+function computedValidation(id, rulesLength)
+{
+  return () =>
+  {
+    let allResults = true
+    for (let index = 0; index < rulesLength; index++)
+    {
+      const curResult = this[`${id}${index}`]
+
+      if (curResult !== true)
+        if (allResults === true)
+          allResults = curResult
+        else
+          allResults = allResults.concat(curResult)
+    }
+  }
+}
+
 function install(Vue, { validators: _validators } = { validators: [] })
 {
   /* eslint no-invalid-this: 0, no-console:0 */
@@ -54,6 +72,29 @@ function install(Vue, { validators: _validators } = { validators: [] })
       this.$store.$validator = validator
       validators.forEach((item) => item.injectStore(this.$store))
     }
+
+    const options = this.$options
+    options.vuex = options.vuex || {}
+    const getters = options.vuex.getters = options.vuex.getters || {}
+
+    validators.forEach((item) =>
+    {
+      item.getProperties.forEach((prop) =>
+      {
+        const id = `\$valid\$${camelCase(prop)}`
+        const rules = item.getRulesByProperty(prop)
+        const rulesLength = rules.length
+        if (rulesLength > 0)
+        {
+          // TODO: Cache generated getters like Vuex do
+          rules.forEach((rule, index) =>
+          {
+            getters[`${id}${index}`] = (state) => rule.validatorFunction(state)
+          })
+          getters[id] = computedValidation(id, rulesLength)
+        }
+      })
+    })
   }
 
   const _init = Vue.prototype._init
@@ -61,6 +102,17 @@ function install(Vue, { validators: _validators } = { validators: [] })
   {
     options.init = options.init ? options.init.concat([ validatorInit ]) : validatorInit
     _init.call(this, options)
+  }
+
+  // option merging (found in vuex)
+  const merge = Vue.config.optionMergeStrategies.computed
+  Vue.config.optionMergeStrategies.vuexValidator = (toVal, fromVal) =>
+  {
+    if (!toVal) return fromVal
+    if (!fromVal) return toVal
+    return {
+      getters: merge(toVal.getters, fromVal.getters)
+    }
   }
 }
 
