@@ -48,6 +48,14 @@ function computedValidation(id, rulesLength)
   }
 }
 
+function callValidatorFunction(validatorFunction, state)
+{
+  return function()
+  {
+    validatorFunction.call(this, state)
+  }
+}
+
 function install(Vue, { validators: _validators } = { validators: [] })
 {
   /* eslint no-invalid-this: 0, no-console:0 */
@@ -89,7 +97,7 @@ function install(Vue, { validators: _validators } = { validators: [] })
           // TODO: Cache generated getters like Vuex do
           rules.forEach((rule, index) =>
           {
-            getters[`${id}${index}`] = () => rule.validatorFunction(state)
+            getters[`${id}${index}`] = callValidatorFunction(rule.validatorFunction, state)
           })
           getters[id] = computedValidation(id, rulesLength)
         }
