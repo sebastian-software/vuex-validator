@@ -32,7 +32,7 @@ const validator = new GlobalValidator()
 
 function computedValidation(id, rulesLength)
 {
-  return () =>
+  return function()
   {
     let allResults = true
     for (let index = 0; index < rulesLength; index++)
