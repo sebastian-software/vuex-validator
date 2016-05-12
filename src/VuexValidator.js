@@ -1,4 +1,4 @@
-import { reduce, camelCase } from "lodash"
+import { reduce, camelCase, isArray } from "lodash"
 
 const validators = []
 const validatorsMap = {}
@@ -39,11 +39,11 @@ function computedValidation(context, id, rulesLength)
     {
       const curResult = context[`${id}${index}`]
 
-      if (curResult !== true)
-        if (allResults === true)
-          allResults = curResult
-        else
+      if (isArray(curResult))
+        if (isArray(allResults))
           allResults = allResults.concat(curResult)
+        else
+          allResults = curResult
     }
 
     return allResults
