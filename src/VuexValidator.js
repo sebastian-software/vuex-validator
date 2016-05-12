@@ -34,16 +34,16 @@ function computedValidation(context, id, rulesLength)
 {
   return function()
   {
-    let allResults = true
+    let allResults = null
     for (let index = 0; index < rulesLength; index++)
     {
       const curResult = context[`${id}${index}`]
 
-      if (isArray(curResult))
+      if (curResult && curResult.valid === false)
         if (isArray(allResults))
           allResults = allResults.concat(curResult)
         else
-          allResults = curResult
+          allResults = [ curResult ]
     }
 
     return allResults
@@ -92,7 +92,7 @@ function install(Vue, { validators: _validators } = { validators: [] })
     {
       item.getProperties().forEach((prop) =>
       {
-        const id = `\$valid\$${camelCase(prop)}`
+        const id = `\$invalid\$${camelCase(prop)}`
         const rules = item.getRulesByProperty(prop)
         const rulesLength = rules.length
         const ruleContext = item.getRuleContext()
