@@ -30,14 +30,14 @@ class GlobalValidator {
 
 const validator = new GlobalValidator()
 
-function computedValidation(id, rulesLength)
+function computedValidation(context, id, rulesLength)
 {
   return function()
   {
     let allResults = true
     for (let index = 0; index < rulesLength; index++)
     {
-      const curResult = this[`${id}${index}`]
+      const curResult = context[`${id}${index}`]
 
       if (curResult !== true)
         if (allResults === true)
@@ -101,7 +101,7 @@ function install(Vue, { validators: _validators } = { validators: [] })
           {
             getters[`${id}${index}`] = callValidatorFunction(ruleContext, rule.validatorFunction, state)
           })
-          getters[id] = computedValidation(id, rulesLength)
+          getters[id] = computedValidation(ruleContext, id, rulesLength)
         }
       })
     })
