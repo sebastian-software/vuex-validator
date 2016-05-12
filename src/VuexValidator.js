@@ -1,4 +1,4 @@
-import { reduce, camelCase, isArray, curry } from "lodash"
+import { reduce } from "lodash"
 
 const validators = []
 const validatorsMap = {}
@@ -57,47 +57,6 @@ function propertyValidator(state)
   }
 }
 
-function computedValidation(context, id, rulesLength)
-{
-  return function()
-  {
-    let allResults = null
-    for (let index = 0; index < rulesLength; index++)
-    {
-      const curResult = context[`${id}${index}`]
-
-      if (curResult && curResult.valid === false)
-        if (isArray(allResults))
-          allResults = allResults.concat(curResult)
-        else
-          allResults = [ curResult ]
-    }
-
-    return allResults
-  }
-}
-
-function callValidatorFunction(context, validatorFunction, state)
-{
-  return function()
-  {
-    return validatorFunction.call(context, state)
-  }
-}
-
-function computedModuleValidation(context, module)
-{
-  return function()
-  {
-    let isValid = validator.isValid(module)
-
-    if (isValid === true)
-      return null
-
-    return isValid
-  }
-}
-
 function install(Vue, { validators: _validators } = { validators: [] })
 {
   /* eslint no-invalid-this: 0, no-console:0 */
@@ -126,7 +85,6 @@ function install(Vue, { validators: _validators } = { validators: [] })
     const options = this.$options
     const getters = options.computed = options.computed || {}
     const state = this.$store.state
-    const self = this
 
     validators.forEach((item) =>
     {
@@ -154,31 +112,6 @@ function install(Vue, { validators: _validators } = { validators: [] })
         getters[prop] = curriedFnt
       })
     }
-
-    /*
-    validators.forEach((item) =>
-    {
-      item.getProperties().forEach((prop) =>
-      {
-        const id = `\$invalid\$${camelCase(prop)}`
-        const rules = item.getRulesByProperty(prop)
-        const rulesLength = rules.length
-        const ruleContext = item.getRuleContext()
-
-        if (rulesLength > 0)
-        {
-          // TODO: Cache generated getters like Vuex do
-          rules.forEach((rule, index) =>
-          {
-            getters[`${id}${index}`] = callValidatorFunction(ruleContext, rule.validatorFunction, state)
-          })
-          getters[id] = computedValidation(self, id, rulesLength)
-        }
-      })
-
-      if (item.module)
-        getters[`\$invalid\$module\$${item.module}`] = computedModuleValidation(self, item.module)
-    }) */
   }
 
   const _init = Vue.prototype._init
