@@ -45,6 +45,8 @@ function computedValidation(context, id, rulesLength)
         else
           allResults = allResults.concat(curResult)
     }
+
+    return allResults
   }
 }
 
