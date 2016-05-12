@@ -92,10 +92,10 @@ export default class BaseValidator {
       if (!propertiesMap[prop])
         propertiesMap[prop] = []
 
-      propertiesMap[prop] = {
+      propertiesMap[prop].push({
         name,
         validatorFunction
-      }
+      })
     })
   }
 
