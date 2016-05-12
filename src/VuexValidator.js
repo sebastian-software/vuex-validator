@@ -62,8 +62,7 @@ function install(Vue, { validators: _validators } = { validators: [] })
   })
   Vue.prototype.$validator = validator
 
-  // This has to be called after Vuex initialisation
-  function validatorInitPost()
+  function validatorInit()
   {
     if (!this.$store)
       throw Error("[Vuex Validator] Vuex store not injected. Please execute Vue.use(store) before executing Vue.use(validator)")
@@ -73,14 +72,10 @@ function install(Vue, { validators: _validators } = { validators: [] })
       this.$store.$validator = validator
       validators.forEach((item) => item.injectStore(this.$store))
     }
-  }
 
-  // This has to be called before Vuex initialisation
-  function validatorInitPre()
-  {
     const options = this.$options
-    options.vuex = options.vuex || {}
-    const getters = options.vuex.getters = options.vuex.getters || {}
+    const getters = options.computed = options.computed || {}
+    const state = this.$store.state
 
     validators.forEach((item) =>
     {
@@ -94,7 +89,7 @@ function install(Vue, { validators: _validators } = { validators: [] })
           // TODO: Cache generated getters like Vuex do
           rules.forEach((rule, index) =>
           {
-            getters[`${id}${index}`] = (state) => rule.validatorFunction(state)
+            getters[`${id}${index}`] = () => rule.validatorFunction(state)
           })
           getters[id] = computedValidation(id, rulesLength)
         }
@@ -106,8 +101,8 @@ function install(Vue, { validators: _validators } = { validators: [] })
   Vue.prototype._init = function(options = {})
   {
     options.init = options.init ?
-      [ validatorInitPre ].concat(options.init).concat([ validatorInitPost ]) :
-      [ validatorInitPre, validatorInitPost ]
+      [ validatorInit ].concat(options.init) :
+      [ validatorInit ]
     _init.call(this, options)
   }
 
