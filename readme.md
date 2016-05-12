@@ -127,26 +127,40 @@ connection middleware before sending data.
 
 ### Validation getter in components
 
-All validations are injected into Vue components itself. The properties are named with a special key:
+Validation getters are added to a component's vuex object with key `validators`. This bears
+analogy to Vuex getters itself mapping global state to component's local state.
 
 ````
-$invalid$<property in camelCase>
+export default Vue.extend({
+	...
+
+	vuex: {
+		getters: {
+			test: (state) => state.test,
+			test2: (state) => state.test2
+		},
+		validators: {
+			testInvalid: (validator) => validator.isInvalid("test"),
+			test2Invalid: (validator) => validator.isInvalid("test2")
+		}
+	}
+});
 ````
 
-So you can access validators for both properties used in the example above via:
+isInvalid takes a property path as string. This is either the property name itself or module name and property name seperated via dot.
 
-- `$invalid$test`
-- `$invalid$test2`
+````
+"<property name>"
+"<module name>.<property name>"
+````
 
-If you are using Vuex state modules it could be something like
+All validator functions are mapped to the component's local computed getters. So it is possible to access validation properties in template:
 
-- `$invalid$userLastname`
+````
+My property {{test}} is invalid: {{testInvalid}}
+````
 
-for property `state.user.lastname`
-
-This validation getter can also be used inside of templates and other computed properties.
-
-As return value either a falsy value (`undefined`, `null` or `false`) is returend in case of this property validated through all rules. Otherwise an array of failing rules return values are returned. the return structure can be something like:
+A falsy value (`undefined`, `null` or `false`) is returend in case of the property validated through all rules. Otherwise an array of failing rules return values are returned. the return structure can be something like:
 
 ````
 [{

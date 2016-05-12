@@ -1,7 +1,8 @@
-import { reduce, camelCase, isArray } from "lodash"
+import { reduce } from "lodash"
 
 const validators = []
 const validatorsMap = {}
+const propertyToValidator = {}
 
 class GlobalValidator {
   isValid(module = null)
@@ -30,44 +31,39 @@ class GlobalValidator {
 
 const validator = new GlobalValidator()
 
-function computedValidation(context, id, rulesLength)
+function propertyValidator(state)
 {
-  return function()
-  {
-    let allResults = null
-    for (let index = 0; index < rulesLength; index++)
+  return {
+    isInvalid: (property) =>
     {
-      const curResult = context[`${id}${index}`]
+      const vals = propertyToValidator[property]
+      if (!vals)
+      {
+        const moduleValidator = validatorsMap[property]
+        if (moduleValidator)
+        {
+          const isValid = moduleValidator.isValid()
+          return isValid === true ? null : isValid
+        }
 
-      if (curResult && curResult.valid === false)
-        if (isArray(allResults))
-          allResults = allResults.concat(curResult)
-        else
-          allResults = [ curResult ]
+        return null
+      }
+
+      return reduce(vals.map((val) => val.validatorFunction(state)), (all, self) =>
+      {
+        if (!self)
+          return all
+
+        // It is possible, that a validation fails without being this property as reason
+        if (self.fields.indexOf(property) < 0)
+          return all
+
+        if (all)
+          return all.concat(self)
+
+        return [ self ]
+      }, null)
     }
-
-    return allResults
-  }
-}
-
-function callValidatorFunction(context, validatorFunction, state)
-{
-  return function()
-  {
-    return validatorFunction.call(context, state)
-  }
-}
-
-function computedModuleValidation(context, module)
-{
-  return function()
-  {
-    let isValid = validator.isValid(module)
-
-    if (isValid === true)
-      return null
-
-    return isValid
   }
 }
 
@@ -99,31 +95,34 @@ function install(Vue, { validators: _validators } = { validators: [] })
     const options = this.$options
     const getters = options.computed = options.computed || {}
     const state = this.$store.state
-    const self = this
+    const statedPropertyValidator = propertyValidator(state)
 
     validators.forEach((item) =>
     {
       item.getProperties().forEach((prop) =>
       {
-        const id = `\$invalid\$${camelCase(prop)}`
+        if (!propertyToValidator[prop])
+          propertyToValidator[prop] = []
+
         const rules = item.getRulesByProperty(prop)
-        const rulesLength = rules.length
-        const ruleContext = item.getRuleContext()
-
-        if (rulesLength > 0)
-        {
-          // TODO: Cache generated getters like Vuex do
-          rules.forEach((rule, index) =>
+        if (rules)
+          rules.forEach((rule) =>
           {
-            getters[`${id}${index}`] = callValidatorFunction(ruleContext, rule.validatorFunction, state)
+            if (propertyToValidator[prop].indexOf(rule) < 0)
+              propertyToValidator[prop].push(rule)
           })
-          getters[id] = computedValidation(self, id, rulesLength)
-        }
       })
-
-      if (item.module)
-        getters[`\$invalid\$module\$${item.module}`] = computedModuleValidation(self, item.module)
     })
+
+    if (options && options.vuex && options.vuex.validators)
+    {
+      const vals = options.vuex.validators
+      Object.keys(vals).forEach((prop) =>
+      {
+        const currentPropertyFnt = vals[prop]
+        getters[prop] = () => currentPropertyFnt(statedPropertyValidator)
+      })
+    }
   }
 
   const _init = Vue.prototype._init

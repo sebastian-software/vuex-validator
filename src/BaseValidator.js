@@ -99,7 +99,7 @@ export default class BaseValidator {
 
       propertiesMap[prop].push({
         name,
-        validatorFunction
+        validatorFunction: validatorFunction.bind(validatorAssertions)
       })
     })
   }
