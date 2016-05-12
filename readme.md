@@ -43,11 +43,110 @@ npm install vuex-validator --save
 
 ## Integration
 
-*TODO*
+In your main application javascript file:
+
+````
+// app.js
+
+import VuexValidator from "vuex-validator";
+import validators from "./vuex/validators";
+import store from "./vuex/store"; // Inside there should be a Vue.use(Vuex) (see Vuex documentation)
+
+Vue.use(VuexValidator, {
+  validators
+})
+````
+
+Your validator configurator:
+
+````
+// ./vuex/validators
+
+import testValidator from "./validation/test";
+
+const validators = [ testValidator ];
+
+export default validators;
+````
+
+A sample validator:
+
+````
+// ./vuex/validation/test.js
+
+import BaseValidator from "vuex-validator/lib/BaseValidator";
+
+class TestValidator extends BaseValidator {
+	constructor() {
+		super("test"); // Name of validation are, should correlate with Vuex store module
+
+		this.rule("test-name", ["test", "test2"], this.testName); // Name of rule, All properties that are tested, Test function itself
+	}
+
+	testName(state) { // State from Vuex
+		if (typeof(state.test) !== "number") {
+			return this.invalid(["test"], "TEST_NOT_A_NUMBER"); // Failed properties and technical error key as string
+		}
+
+		if (typeof(state.test2) !== "string") {
+			return this.invalid(["test2"], "TEST2_NOT_A_STRING"); // Failed properties and technical error key as string
+		}
+
+		if (state.test > 20 && state.test2 === "low number") {
+			return this.invalid(["test", test2"], "TEST"_IS_NO_LOW_NUMBER); // Failed properties and technical error key as string
+		}
+
+		return null; // Null or undefined means "no validation errors"
+	}
+}
+
+export default new TestValidator();
+````
+
+A sample state for this could be:
+
+````
+{
+	"test": 123,
+	"test2": "a string"
+}
+````
 
 ## Usage
 
-*TODO*
+There are two ways to use this validation.
+
+### Active validation
+
+To actively validate values you can call
+
+````
+store.$validator.isValid("test-name")
+````
+
+This validates all values of Validator named *test-name*. It returnes `true` if all values are valid as defined by your rules in validator *test-name*. This could be used for backend
+connection middleware before sending data.
+
+### Validation getter in components
+
+All validations are injected into Vue components itself. The properties are named with a special key:
+
+````
+$invalid$<property in camelCase>
+````
+
+So you can access validators for both properties used in the example above via:
+
+- `$invalid$test`
+- `$invalid$test2`
+
+If you are using Vuex state modules it could be something like
+
+- `$invalid$userLastname`
+
+for property `state.user.lastname`
+
+This validation getter can also be used inside of templates and other computed properties.
 
 ## Copyright
 
