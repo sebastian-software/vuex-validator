@@ -79,7 +79,7 @@ function install(Vue, { validators: _validators } = { validators: [] })
 
     validators.forEach((item) =>
     {
-      item.getProperties.forEach((prop) =>
+      item.getProperties().forEach((prop) =>
       {
         const id = `\$valid\$${camelCase(prop)}`
         const rules = item.getRulesByProperty(prop)
