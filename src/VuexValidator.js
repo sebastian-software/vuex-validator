@@ -133,8 +133,13 @@ function install(Vue, { validators: _validators } = { validators: [] })
         if (!propertyToValidator[prop])
           propertyToValidator[prop] = []
 
-        if (propertyToValidator[prop].indexOf(item) < 0)
-          propertyToValidator[prop].push(item)
+        const rules = item.getRulesByProperty(prop)
+        if (rules)
+          rules.forEach((rule) =>
+          {
+            if (propertyToValidator[prop].indexOf(rule) < 0)
+              propertyToValidator[prop].push(rule)
+          })
       })
     })
 
