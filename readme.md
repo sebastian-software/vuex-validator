@@ -93,7 +93,7 @@ class TestValidator extends BaseValidator {
 		}
 
 		if (state.test > 20 && state.test2 === "low number") {
-			return this.invalid(["test", test2"], "TEST"_IS_NO_LOW_NUMBER); // Failed properties and technical error key as string
+			return this.invalid(["test", test2"], "TEST_IS_NO_LOW_NUMBER"); // Failed properties and technical error key as string
 		}
 
 		return null; // Null or undefined means "no validation errors"
@@ -147,6 +147,19 @@ If you are using Vuex state modules it could be something like
 for property `state.user.lastname`
 
 This validation getter can also be used inside of templates and other computed properties.
+
+As return value either a falsy value (`undefined`, `null` or `false`) is returend in case of this property validated through all rules. Otherwise an array of failing rules return values are returned. the return structure can be something like:
+
+````
+[{
+	error: "TEST_IS_NO_LOW_NUMBER",
+	fields: ["test", "test2"],
+	valid: false
+}]
+````
+
+`fields` is an array of properties that are tested against in the failing rule. `error`
+is the technical error key defined.
 
 ## Copyright
 
