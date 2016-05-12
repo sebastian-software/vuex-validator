@@ -150,7 +150,7 @@ function install(Vue, { validators: _validators } = { validators: [] })
       const vals = options.vuex.validators
       Object.keys(vals).forEach((prop) =>
       {
-        const curriedFnt = curry(vals[prop], 1)(propertyValidator)
+        const curriedFnt = curry(vals[prop], 1)(propertyValidator(state))
         getters[prop] = curriedFnt
       })
     }
