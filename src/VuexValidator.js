@@ -86,6 +86,7 @@ function install(Vue, { validators: _validators } = { validators: [] })
     const options = this.$options
     const getters = options.computed = options.computed || {}
     const state = this.$store.state
+    const self = this
 
     validators.forEach((item) =>
     {
@@ -103,7 +104,7 @@ function install(Vue, { validators: _validators } = { validators: [] })
           {
             getters[`${id}${index}`] = callValidatorFunction(ruleContext, rule.validatorFunction, state)
           })
-          getters[id] = computedValidation(ruleContext, id, rulesLength)
+          getters[id] = computedValidation(self, id, rulesLength)
         }
       })
     })
