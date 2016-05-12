@@ -85,6 +85,7 @@ function install(Vue, { validators: _validators } = { validators: [] })
     const options = this.$options
     const getters = options.computed = options.computed || {}
     const state = this.$store.state
+    const statedPropertyValidator = propertyValidator(state)
 
     validators.forEach((item) =>
     {
@@ -108,8 +109,8 @@ function install(Vue, { validators: _validators } = { validators: [] })
       const vals = options.vuex.validators
       Object.keys(vals).forEach((prop) =>
       {
-        const curriedFnt = curry(vals[prop], 1)(propertyValidator(state))
-        getters[prop] = curriedFnt
+        const currentPropertyFnt = vals[prop]
+        getters[prop] = () => currentPropertyFnt(statedPropertyValidator)
       })
     }
   }
