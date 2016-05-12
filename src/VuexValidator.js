@@ -31,27 +31,29 @@ class GlobalValidator {
 
 const validator = new GlobalValidator()
 
-const propertyValidator = {
-  isInvalid: (property) =>
-  {
-    const vals = propertyToValidator[property]
-    if (!vals)
-      return null
-
-    return reduce(vals.map((val) => val.isValid()), (all, self) =>
+function propertyValidator(state)
+{
+  return {
+    isInvalid: (property) =>
     {
-      console.log("TEST >>>>>", all, self)
-      if (all === true && self === true)
-        return true
+      const vals = propertyToValidator[property]
+      if (!vals)
+        return null
 
-      if (all !== true && self === true)
-        return all
+      return reduce(vals.map((val) => val.validatorFunction(state)), (all, self) =>
+      {
+        if (all === true && self === true)
+          return true
 
-      if (all === true && self !== true)
-        return self
+        if (all !== true && self === true)
+          return all
 
-      return all.concat(self)
-    })
+        if (all === true && self !== true)
+          return self
+
+        return all.concat(self)
+      })
+    }
   }
 }
 
