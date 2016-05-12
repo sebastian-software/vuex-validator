@@ -52,7 +52,7 @@ function callValidatorFunction(context, validatorFunction, state)
 {
   return function()
   {
-    validatorFunction.call(context, state)
+    return validatorFunction.call(context, state)
   }
 }
 
