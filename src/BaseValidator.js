@@ -42,6 +42,7 @@ export default class BaseValidator {
   constructor(module = null)
   {
     this._ruleMap = []
+    this._propertiesMap = {}
     this.module = module
   }
 
@@ -50,8 +51,19 @@ export default class BaseValidator {
     this._store = store
   }
 
+  getProperties()
+  {
+    return Object.keys(this._propertiesMap)
+  }
+
+  getRulesByProperty(property)
+  {
+    return this._propertiesMap[property]
+  }
+
   /*
    * Add rule to validator. name {string} is the rule's name to find it in debugging mode.
+   * properties {array(string)} is a list of properties that are validated with this rule.
    * validatorFunction {function(state)} is the validator function given global state as
    * first parameter.
    *
@@ -66,11 +78,24 @@ export default class BaseValidator {
    * The validatorFunction is called in context of ValidatorAssertions, so every function in there
    * is callable via this.functionName().
    */
-  rule(name, validatorFunction)
+  rule(name, properties, validatorFunction)
   {
     this._ruleMap.push({
       name,
+      properties,
       validatorFunction
+    })
+
+    const propertiesMap = this._propertiesMap
+    properties.forEach((prop) =>
+    {
+      if (!propertiesMap[prop])
+        propertiesMap[prop] = []
+
+      propertiesMap[prop] = {
+        name,
+        validatorFunction
+      }
     })
   }
 
