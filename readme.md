@@ -46,7 +46,7 @@ In your main application javascript file:
 ````
 // app.js
 
-import VuexValidator from "vuex-validator";
+import { VuexValidator } from "vuex-validator";
 import validators from "./vuex/validators";
 import store from "./vuex/store"; // Inside there should be a Vue.use(Vuex) (see Vuex documentation)
 
@@ -72,7 +72,7 @@ A sample validator:
 ````
 // ./vuex/validation/test.js
 
-import BaseValidator from "vuex-validator/lib/BaseValidator";
+import { BaseValidator } from "vuex-validator/lib/BaseValidator";
 
 class TestValidator extends BaseValidator {
 	constructor() {
