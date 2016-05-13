@@ -67,9 +67,11 @@ function propertyValidator(state)
   }
 }
 
-function install(Vue, { validators: _validators } = { validators: [] })
+function install(Vue, options)
 {
   /* eslint no-invalid-this: 0, no-console:0 */
+  const _validators = options && options.validators
+
   if (_validators.length === 0)
     console.warn("[Vuex Validator] No validators found. Maybe you want to do Vue.use(validator, { validators: [myValidator] })")
 
