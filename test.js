@@ -7,10 +7,8 @@
  */
 
 import test from "ava"
-import "babel-register"
 
-import VuexValidator from "./src/VuexValidator"
-import BaseValidator from "./src/BaseValidator"
+import { VuexValidator, BaseValidator } from "./lib/VuexValidator"
 
 test("VuexValidator Plugin is valid", (api) =>
 {
