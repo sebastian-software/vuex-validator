@@ -96,6 +96,7 @@ function install(Vue, { validators: _validators } = { validators: [] })
     const getters = options.computed = options.computed || {}
     const state = this.$store.state
     const statedPropertyValidator = propertyValidator(state)
+    const self = this
 
     validators.forEach((item) =>
     {
@@ -120,7 +121,7 @@ function install(Vue, { validators: _validators } = { validators: [] })
       Object.keys(vals).forEach((prop) =>
       {
         const currentPropertyFnt = vals[prop]
-        getters[prop] = () => currentPropertyFnt(statedPropertyValidator)
+        getters[prop] = () => currentPropertyFnt.call(self, statedPropertyValidator)
       })
     }
   }
