@@ -1,6 +1,6 @@
 {
   "name": "vuex-validator",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Validation support for Vuex",
   "keywords": [
     "vuejs",
