@@ -1,4 +1,6 @@
-import { reduce, isFinite, isString } from "lodash"
+import reduce from "lodash-es/reduce"
+import isFinite from "lodash-es/isFinite"
+import isString from "lodash-es/isString"
 
 class ValidatorAssertions {
   invalid(fields, error)
