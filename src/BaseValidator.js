@@ -15,9 +15,7 @@ class ValidatorAssertions {
 
   errors()
   {
-    const errors = this._errors
-    this.clearErrors()
-    return errors
+    return this._errors
   }
 
   invalid(fields, error)
