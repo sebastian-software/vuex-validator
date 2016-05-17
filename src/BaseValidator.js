@@ -106,6 +106,9 @@ export default class BaseValidator {
    */
   rule(name, properties, validatorFunction)
   {
+    if (name === this.module)
+      throw new Error("Rule must not have the same name than the module itself")
+
     function boundValidatorFunction(...rest)
     {
       validatorAssertions.clearErrors()
