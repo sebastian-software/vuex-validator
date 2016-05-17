@@ -3,13 +3,34 @@ import isFinite from "lodash-es/isFinite"
 import isString from "lodash-es/isString"
 
 class ValidatorAssertions {
+  constructor()
+  {
+    this._errors = []
+  }
+
+  clearErrors()
+  {
+    this._errors = []
+  }
+
+  errors()
+  {
+    const errors = this._errors
+    this.clearErrors()
+    return errors
+  }
+
   invalid(fields, error)
   {
-    return {
+    const err = {
       valid: false,
       fields,
       error
     }
+
+    this._errors.push(err)
+
+    return err
   }
 
   isNumber(value)
@@ -87,10 +108,16 @@ export default class BaseValidator {
    */
   rule(name, properties, validatorFunction)
   {
+    function boundValidatorFunction(...rest)
+    {
+      validatorAssertions.clearErrors()
+      return validatorFunction.apply(validatorAssertions, rest)
+    }
+
     this._ruleMap.push({
       name,
       properties,
-      validatorFunction
+      validatorFunction: boundValidatorFunction
     })
 
     const propertiesMap = this._propertiesMap
@@ -101,7 +128,7 @@ export default class BaseValidator {
 
       propertiesMap[prop].push({
         name,
-        validatorFunction: validatorFunction.bind(validatorAssertions)
+        validatorFunction: boundValidatorFunction
       })
     })
   }
@@ -114,7 +141,7 @@ export default class BaseValidator {
       this._ruleMap.map(
         (rule) =>
         {
-          const valid = rule.validatorFunction.call(validatorAssertions, state)
+          const valid = rule.validatorFunction(state)
 
           if (valid && valid.valid === false)
             return {
