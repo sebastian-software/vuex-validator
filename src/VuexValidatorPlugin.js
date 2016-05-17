@@ -1,5 +1,4 @@
 import reduce from "lodash-es/reduce"
-import isArray from "lodash-es/isArray"
 
 const validators = []
 const validatorsMap = {}
@@ -52,22 +51,21 @@ function propertyValidator(state)
 
       return reduce(vals.map((val) => val.validatorFunction(state)), (all, self) =>
       {
+        if (!self)
+          return all
+
         let myself = self
 
-        if (myself instanceof Array && myself.length <= 1)
-          myself = myself[0]
-
-        if (!myself)
-          return all
+        if (!(myself instanceof Array))
+          myself = [ myself ]
 
         // It is possible, that a validation fails without being this property as reason
-        if (myself.fields.indexOf(property) < 0)
-          return all
+        myself = myself.filter((item) => item.fields.indexOf(property) >= 0)
 
         if (all)
           return all.concat(myself)
 
-        return [ myself ]
+        return myself
       }, null)
     }
   }
