@@ -121,9 +121,9 @@ function install(Vue, options)
       })
     })
 
-    if (options && options.vuex && options.vuex.validators)
+    if (options && options.validators)
     {
-      const vals = options.vuex.validators
+      const vals = options.validators
       Object.keys(vals).forEach((prop) =>
       {
         const currentPropertyFnt = vals[prop]
@@ -143,14 +143,12 @@ function install(Vue, options)
 
   // option merging (found in vuex)
   const merge = Vue.config.optionMergeStrategies.computed
-  Vue.config.optionMergeStrategies.vuexValidator = (toVal, fromVal) =>
+  Vue.config.optionMergeStrategies.validators = (toVal, fromVal) =>
   {
     if (!toVal) return fromVal
     if (!fromVal) return toVal
-    return {
-      getters: merge(toVal.getters, fromVal.getters),
-      vuex: merge(toVal.vuex, fromVal.vuex)
-    }
+
+    return merge(toVal, fromVal)
   }
 }
 

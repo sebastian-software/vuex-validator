@@ -127,22 +127,16 @@ connection middleware before sending data.
 
 ### Validation getter in components
 
-Validation getters are added to a component's vuex object with key `validators`. This bears
+Validation getters are added to a component's option object with key `validators`. This bears
 analogy to Vuex getters itself mapping global state to component's local state.
 
 ````
 export default Vue.extend({
 	...
 
-	vuex: {
-		getters: {
-			test: (state) => state.test,
-			test2: (state) => state.test2
-		},
-		validators: {
-			testInvalid: (validator) => validator.isInvalid("test"),
-			test2Invalid: (validator) => validator.isInvalid("test2")
-		}
+	validators: {
+		testInvalid: (validator) => validator.isInvalid("test"),
+		test2Invalid: (validator) => validator.isInvalid("test2")
 	}
 });
 ````
