@@ -148,7 +148,8 @@ function install(Vue, options)
     if (!toVal) return fromVal
     if (!fromVal) return toVal
     return {
-      getters: merge(toVal.getters, fromVal.getters)
+      getters: merge(toVal.getters, fromVal.getters),
+      vuex: merge(toVal.vuex, fromVal.vuex)
     }
   }
 }
