@@ -144,12 +144,17 @@ export default class BaseValidator {
         {
           const valid = rule.validatorFunction(state)
 
-          if (valid && valid.valid === false)
-            return {
+          if (valid && valid.length > 0)
+          {
+            let valids = valid.filter((item) => item.valid === false).map((item) => ({
               name: rule.name,
-              fields: valid.fields,
-              error: valid.error
-            }
+              fields: item.fields,
+              error: item.error
+            }))
+
+            if (valids.length > 0)
+              return valids
+          }
 
           return true
         }
