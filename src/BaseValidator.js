@@ -165,7 +165,7 @@ export default class BaseValidator {
           return all
 
         if (all === true)
-          return [ thisRule ]
+          return thisRule
 
         return all.concat(thisRule)
       },
