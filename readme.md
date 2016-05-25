@@ -83,18 +83,18 @@ class TestValidator extends BaseValidator {
 
 	testName(state) { // State from Vuex
 		if (typeof(state.test) !== "number") {
-			return this.invalid(["test"], "TEST_NOT_A_NUMBER"); // Failed properties and technical error key as string
+			this.invalid(["test"], "TEST_NOT_A_NUMBER"); // Failed properties and technical error key as string
 		}
 
 		if (typeof(state.test2) !== "string") {
-			return this.invalid(["test2"], "TEST2_NOT_A_STRING"); // Failed properties and technical error key as string
+			this.invalid(["test2"], "TEST2_NOT_A_STRING"); // Failed properties and technical error key as string
 		}
 
 		if (state.test > 20 && state.test2 === "low number") {
-			return this.invalid(["test", test2"], "TEST_IS_NO_LOW_NUMBER"); // Failed properties and technical error key as string
+			this.invalid(["test", test2"], "TEST_IS_NO_LOW_NUMBER"); // Failed properties and technical error key as string
 		}
 
-		return null; // Null or undefined means "no validation errors"
+		return this.errors(); // Return null if no errors, otherwise array of errors
 	}
 }
 
