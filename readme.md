@@ -1,6 +1,9 @@
+[unmaintained-url]: .github/ISSUE_TEMPLATE.md
+[unmaintained-image]: https://img.shields.io/badge/project-unmaintained-red.svg
+
 <img src="assets/vuejs.png" alt="VueJS Logo" width="200" height="200"/>
 
-# Vuex Validator<br/>[![Sponsored by][sponsor-img]][sponsor] [![Version][npm-version-img]][npm] [![Downloads][npm-downloads-img]][npm] [![Build Status][ci-img]][ci] [![Dependencies][deps-img]][deps]
+# Vuex Validator<br/>[![Project unmaintained][unmaintained-image]][unmaintained-url] [![Sponsored by][sponsor-img]][sponsor] [![Version][npm-version-img]][npm] [![Downloads][npm-downloads-img]][npm] [![Build Status][ci-img]][ci] [![Dependencies][deps-img]][deps]
 
 [Vuex] Plugin for validation of store values.
 
